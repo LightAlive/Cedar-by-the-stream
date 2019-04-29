@@ -1,0 +1,88 @@
+void CGmawVM::robotDATInitDunp(ostream &p_os) const
+{
+	//参数初始化
+	p_os<<"&ACCESS RVP"<<'\n'<<"&REL 12"<<'\n'<<"&PARAM DISKPATH = KRC:\\R1"<<endl;
+	p_os<<"DEFDAT  MAINPROGRAM"<<'\n'<<"EXT  BAS (BAS_COMMAND  :IN,REAL  :IN )"<<'\n'<<"DECL INT SUCCESS"<<endl;
+	p_os<<endl;
+	
+	//坐标系设定
+	p_os<<"DECL FDAT FP0={TOOL_NO 3,BASE_NO "<<m_GmawPropertySetting.baseNumber<<",IPO_FRAME #BASE,POINT2[]"<<" \" \" "<< ",TQ_STATE FALSE}"<<endl;
+	
+	//LINE指令相关参数设置
+	//Arc Off
+	//Arc Switch
+	p_os<<"DECL LDAT LCPDAT0={ACC 100.000,APO_DIST 100.000,APO_FAC 50.0000,AXIS_VEL 100.000,AXIS_ACC 100.000,ORI_TYP #VAR,CIRC_TYP #BASE,JERK_FAC 50.0000,GEAR_JERK 50.0000,EXAX_IGN 0}"<<endl;
+	
+	//PTP指令相关参数
+	p_os<<"DECL PDAT PPDAT0={ACC 100.000,APO_DIST 100.000,APO_MODE #CPTP,GEAR_JERK 50.0000}"<<endl;
+	//启弧参数0.00603333377
+	p_os<<"DECL ATBg_Start_T AS_WDAT0={JobModeId 732750510,ParamSetId -243025295,StartTime 0.200000,PreFlowTime 0.500000,Channel1 1.00000,Channel2 0.0,Channel3 0.0,Channel4 0.0,Channel5 0.0,Channel6 0.0,Channel7 0.0,Channel8 0.0,PurgeTime 0.0}"<<endl;	//送气
+	p_os<<"DECL ATBg_Weld_T AW_WDAT0={JobModeId 732750510,ParamSetId -1540567493,Velocity "<<m_GmawPropertySetting.weldSpeed<<",Channel1 1.00000,Channel2 0.0,Channel3 0.0,Channel4 0.0,Channel5 0.0,Channel6 0.0,Channel7 0.0,Channel8 0.0}"<<endl;
+	p_os<<"DECL WTCg_WeaveDefinition_T WV_WDAT0={Pattern #None,Length 4.00000,Amplitude 2.00000,Angle 0.0}"<<endl;	
+	
+	//中间过渡参数与启弧参数
+	//p_os<<"DECL ATBg_Weld_T AW_WDAT2={JobModeId 732750510,ParamSetId -1540567493,Velocity 0.00603333377,Channel1 1.00000,Channel2 0.0,Channel3 0.0,Channel4 0.0,Channel5 0.0,Channel6 0.0,Channel7 0.0,Channel8 0.0}"<<endl;
+	
+	//息弧参数
+	p_os<<"DECL ATBg_Crater_T AC_WDAT0 = {JobModeId 732750510,ParamSetId 885173050,CraterTime 0.400000,PostflowTime 0.200000,Channel1 1.00000,Channel2 0.0,Channel3 0.0,Channel4 0.0,Channel5 0.0,Channel6 0.0,Channel7 0.0,Channel8 0.0}"<<endl;
+}
+
+void CGmawVM::robotSRCInitDunp(ostream &p_os) const
+{
+	//参数初始化
+	p_os<<"&ACCESS RVP"<<'\n'<<"&REL 12"<<'\n'<<"&PARAM DISKPATH = KRC:\\R1"<<endl;
+	
+	p_os<<"DEF MAINPROGRAM()"<<'\n';
+	
+	p_os<<";FOLD Moduleparameters;%{h}"<<endl;
+	p_os<<";Params Kuka.MoveDataPtpName=PDAT1; Kuka.VelocityPtp=50; Kuka.PointName=P5; Kuka.BlendingEnabled=True; Kuka.FrameData.tq_state=False; Kuka.FrameData.base_no=8; Kuka.FrameData.tool_no=5; Kuka.FrameData.ipo_frame=#BASE; Kuka.MovementDataPdat.apo_mode=#CPTP; Kuka.MovementDataPdat.apo_dist=100; Kuka.MovementData.acc=100; Kuka.MovementData.gear_jerk=50; ArcTech.WdatVarName=WDAT5; Kuka.MoveDataName=CPDAT4; Kuka.VelocityPath=2; Kuka.MovementData.apo_fac=50; Kuka.MovementData.apo_dist=100; Kuka.MovementData.axis_acc=100; Kuka.MovementData.axis_vel=100; Kuka.MovementData.circ_typ=#BASE; Kuka.MovementData.exax_ign=0; Kuka.MovementData.jerk_fac=50; Kuka.MovementData.ori_typ=#CONSTANT; Kuka.FrameData.point2="<<endl;
+	p_os<<";ENDFOLD Moduleparameters"<<'\n'<<";FOLD INI;%{PE}"<<'\n'<<" ;FOLD BASISTECH INI"<<endl;
+	
+	p_os<<"GLOBAL INTERRUPT DECL 3 WHEN $STOPMESS==TRUE DO IR_STOPM ( )"<<'\n'<<"INTERRUPT ON 3"<<'\n'<<"BAS (#INITMOV,0 )"<<endl;
+	
+	p_os<<" ;ENDFOLD (BASISTECH INI)"<<'\n'<<" ;FOLD USER INI"<<'\n'<<"  ;Make your modifications here\n"<<'\n'<<" ;ENDFOLD (USER INI)"<<'\n'<<";ENDFOLD (INI)"<<endl;
+	p_os<<endl;
+}
+
+//焊接
+void CGmawVM::robotSRCDunp(ostream &p_os, int p_size) const
+{
+	//回零
+	p_os<<"$BWDSTART=FALSE"<<'\n'<<"PDAT_ACT=PDEFAULT"<<'\n'<<"FDAT_ACT=FHOME"<<'\n'<<"BAS(#PTP_PARAMS,10)"<<'\n'<<"$H_POS=XHOME"<<'\n'<<"PTP XHOME"<<endl;
+	p_os<<endl;
+	
+	for (int j = 0; j < p_size; ++j)
+	{
+		//启弧
+		if (j == 0)
+		{
+			p_os<<"PDAT_ACT=PPDAT0"<<'\n'<<"FDAT_ACT=FP0"<<'\n'<<"BAS(#PTP_PARAMS, 1.0)"<<endl;
+			p_os<<"TRIGGER WHEN DISTANCE = 1 DELAY=ATBg_PreDefinitionTime DO Arc_DefineStrikeParams(1, AS_WDAT0) PRIO = -1"<<'\n'<<"Arc_DefineCpPattern(#OffInAdvance, WV_WDAT0, TRUE)"<<endl;			
+			p_os<<"PTP XP"<<j<<endl;
+			p_os<<"Arc_On(1, AS_WDAT0, ATBg_StartErrSetField[1], AW_WDAT0, WV_WDAT0, ATBg_WeldErrSetField[1], #StdArcOn,"<<" \" \")"<<endl;
+			p_os<<"Arc_DefineCpPattern(#OnInAdvance, WV_WDAT0, TRUE)"<<endl;
+			p_os<<endl;
+		}
+		//息弧
+		else if (j == p_size - 1)
+		{
+			p_os<<"BAS(#CP_PARAMS, ATBg_BAS_VELDefinition)"<<endl;
+			p_os<<"LIN XP"<<j<<endl;
+			p_os<<"Arc_Off(1, AC_WDAT0)"<<endl;
+			p_os<<endl;		
+		}
+		//中间焊接过程
+		else
+		{
+			p_os<<"LDAT_ACT=LCPDAT0"<<'\n'<<"LDAT_ACT.APO_Dist = ATBg_APODistanceArcTech"<<'\n'<<"BAS(#CP_PARAMS, ATBg_BAS_VELDefinition)"<<endl;
+			p_os<<"TRIGGER WHEN DISTANCE = 1 DELAY = 0 DO Arc_Swi(1, AW_WDAT0, WV_WDAT0, ATBg_WeldErrSetField[1]) PRIO = -1"<<endl;
+			p_os<<"LIN XP"<<j<<" C_Dis C_Dis"<<endl;
+			p_os<<"ATB_Definition(AW_WDAT0)"<<endl;
+			p_os<<endl;
+		}
+	}
+	//回零
+	p_os<<"$BWDSTART=FALSE"<<'\n'<<"PDAT_ACT=PDEFAULT"<<'\n'<<"FDAT_ACT=FHOME"<<'\n'<<"BAS(#PTP_PARAMS,10)"<<'\n'<<"$H_POS=XHOME"<<'\n'<<"PTP XHOME"<<endl;
+	p_os<<"END"<<endl;
+	p_os<<endl;
+}

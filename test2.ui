@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>test2Class</class>
+ <widget class="QMainWindow" name="test2Class">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>623</width>
+    <height>510</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>曲面分层制造工艺规划软件</string>
+  </property>
+  <widget class="QWidget" name="centralWidget">
+   <layout class="QGridLayout" name="gridLayout_2">
+    <item row="0" column="0">
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="0" column="0">
+       <widget class="QVTKWidget" name="qvtkWidget"/>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>623</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menu">
+    <property name="title">
+     <string>打开</string>
+    </property>
+    <addaction name="action_STL"/>
+   </widget>
+   <widget class="QMenu" name="menu_2">
+    <property name="title">
+     <string>体素化</string>
+    </property>
+    <addaction name="action_Voxel"/>
+    <addaction name="actionDetection"/>
+    <addaction name="actionRobot"/>
+    <addaction name="action_dat"/>
+   </widget>
+   <widget class="QMenu" name="menu_3">
+    <property name="title">
+     <string>曲面分层</string>
+    </property>
+    <widget class="QMenu" name="menu_7">
+     <property name="title">
+      <string>基于生长线的曲面分层</string>
+     </property>
+     <addaction name="action_IsochoricLayer"/>
+     <addaction name="action_VariableThicknessLayer"/>
+    </widget>
+    <addaction name="action_Tool"/>
+    <addaction name="menu_7"/>
+   </widget>
+   <widget class="QMenu" name="menu_4">
+    <property name="title">
+     <string>路径填充</string>
+    </property>
+    <addaction name="actionZigzag"/>
+    <addaction name="action_Outline"/>
+   </widget>
+   <widget class="QMenu" name="menu_5">
+    <property name="title">
+     <string>制造模拟</string>
+    </property>
+    <addaction name="action_Simulation"/>
+   </widget>
+   <widget class="QMenu" name="menu_6">
+    <property name="title">
+     <string>输出</string>
+    </property>
+    <addaction name="action_Gcode"/>
+    <addaction name="action_Robot"/>
+   </widget>
+   <addaction name="menu"/>
+   <addaction name="menu_2"/>
+   <addaction name="menu_3"/>
+   <addaction name="menu_4"/>
+   <addaction name="menu_5"/>
+   <addaction name="menu_6"/>
+  </widget>
+  <widget class="QToolBar" name="mainToolBar">
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+  </widget>
+  <widget class="QStatusBar" name="statusBar"/>
+  <action name="action_STL">
+   <property name="text">
+    <string>打开STL文件</string>
+   </property>
+  </action>
+  <action name="action_Voxel">
+   <property name="text">
+    <string>生成体素模型</string>
+   </property>
+  </action>
+  <action name="action_Tool">
+   <property name="text">
+    <string>基于曲面偏置的曲面分层</string>
+   </property>
+  </action>
+  <action name="actionZigzag">
+   <property name="text">
+    <string>Z字形路径</string>
+   </property>
+  </action>
+  <action name="action_Outline">
+   <property name="text">
+    <string>轮廓路径</string>
+   </property>
+  </action>
+  <action name="action_Simulation">
+   <property name="text">
+    <string>制造路径动态模拟</string>
+   </property>
+  </action>
+  <action name="action_Gcode">
+   <property name="text">
+    <string>G代码</string>
+   </property>
+  </action>
+  <action name="action_Robot">
+   <property name="text">
+    <string>机器人离线编程文件</string>
+   </property>
+  </action>
+  <action name="action_IsochoricLayer">
+   <property name="text">
+    <string>等层厚分层</string>
+   </property>
+  </action>
+  <action name="action_VariableThicknessLayer">
+   <property name="text">
+    <string>变层厚分层</string>
+   </property>
+  </action>
+  <action name="actionDetection">
+   <property name="checkable">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>干涉检测</string>
+   </property>
+  </action>
+  <action name="actionRobot">
+   <property name="text">
+    <string>生成机器人.src文件</string>
+   </property>
+  </action>
+  <action name="action_dat">
+   <property name="text">
+    <string>生成机器人.dat文件</string>
+   </property>
+  </action>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>QVTKWidget</class>
+   <extends>QWidget</extends>
+   <header>QVTKWidget.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="test2.qrc"/>
+ </resources>
+ <connections/>
+</ui>

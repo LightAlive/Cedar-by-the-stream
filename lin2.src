@@ -1,0 +1,54 @@
+&ACCESS RVP
+&PARAM DISKPATH = KRC:\R1\Program\hty
+DEF lin2( )
+;FOLD INI;%{PE}
+  ;FOLD BASISTECH INI
+    GLOBAL INTERRUPT DECL 3 WHEN $STOPMESS==TRUE DO IR_STOPM ( )
+    INTERRUPT ON 3 
+    BAS (#INITMOV,0 )
+  ;ENDFOLD (BASISTECH INI)
+  ;FOLD USER INI
+    ;Make your modifications here
+
+  ;ENDFOLD (USER INI)
+;ENDFOLD (INI)
+;FOLD PTP P6 Vel=10 % PDAT4 Tool[1]:tool1 Base[0];%{PE}%R 8.3.38,%MKUKATPBASIS,%CMOVE,%VPTP,%P 1:PTP, 2:P6, 3:, 5:10, 7:PDAT4
+$BWDSTART=FALSE
+PDAT_ACT=PPDAT4
+FDAT_ACT=FP6
+BAS(#PTP_PARAMS,10)
+PTP XP6 
+;ENDFOLD
+;FOLD ARCON WDAT3 PTP P7 Vel=10 % PDAT5 Tool[1]:tool1 Base[0] ;%{PE}
+;FOLD Parameters ;%{h}
+;Params IlfProvider=kukaroboter.arctech.arconptp; Kuka.PointName=P7; Kuka.BlendingEnabled=False; Kuka.MoveDataPtpName=PDAT5; Kuka.VelocityPtp=10; Kuka.MovementParameterFieldEnabled=True; ArcTech.WdatVarName=WDAT3; ArcTech.SeamName=
+;ENDFOLD
+$BWDSTART = FALSE
+PDAT_ACT = PPDAT5
+FDAT_ACT = FP7
+BAS(#PTP_PARAMS, 10.0)
+TRIGGER WHEN DISTANCE = 1 DELAY = ATBg_PreDefinitionTime DO Arc_DefineStrikeParams(1, AS_WDAT3) PRIO = -1
+Arc_DefineCpPattern(#OffInAdvance, WV_WDAT3, TRUE)
+PTP XP7
+Arc_On(1, AS_WDAT3, ATBg_StartErrSetField[1], AW_WDAT3, WV_WDAT3, ATBg_WeldErrSetField[1], #StdArcOn, " ")
+Arc_DefineCpPattern(#OnInAdvance, WV_WDAT3, TRUE)
+;ENDFOLD
+;FOLD ARCOFF WDAT4 LIN P8 CPDAT3 Tool[1]:tool1 Base[0] ;%{PE}
+;FOLD Parameters ;%{h}
+;Params IlfProvider=kukaroboter.arctech.arcofflin; Kuka.PointName=P8; Kuka.BlendingEnabled=False; Kuka.MoveDataName=CPDAT3;  Kuka.MovementParameterFieldEnabled=True; ArcTech.WdatVarName=WDAT4
+;ENDFOLD
+$BWDSTART = FALSE
+LDAT_ACT = LCPDAT3
+FDAT_ACT = FP8
+BAS(#CP_PARAMS, ATBg_BAS_VELDefinition)
+LIN XP8
+Arc_Off(1, AC_WDAT4)
+;ENDFOLD
+;FOLD PTP P10 Vel=10 % PDAT6 Tool[1]:tool1 Base[0];%{PE}%R 8.3.38,%MKUKATPBASIS,%CMOVE,%VPTP,%P 1:PTP, 2:P10, 3:, 5:10, 7:PDAT6
+$BWDSTART=FALSE
+PDAT_ACT=PPDAT6
+FDAT_ACT=FP10
+BAS(#PTP_PARAMS,10)
+PTP XP10 
+;ENDFOLD
+END

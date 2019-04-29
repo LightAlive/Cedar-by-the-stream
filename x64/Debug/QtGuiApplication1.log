@@ -1,0 +1,4 @@
+﻿  test2.cpp
+test2.cpp(163): warning C4129: “R”: 不可识别的字符转义序列
+  QtGuiApplication1.vcxproj -> D:\VS2015-practice\QtGuiApplication1\x64\Debug\QtGuiApplication1.exe
+  QtGuiApplication1.vcxproj -> D:\VS2015-practice\QtGuiApplication1\x64\Debug\QtGuiApplication1.pdb (Full PDB)

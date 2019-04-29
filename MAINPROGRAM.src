@@ -1,0 +1,36 @@
+&ACCESS RVP
+&REL 12
+&PARAM DISKPATH = KRC:\R1
+DEF MAINPROGRAM()
+;FOLD Moduleparameters;%{h}        //Ä£¿é²ÎÊý
+;Params Kuka.MoveDataPtpName=PDAT1; Kuka.VelocityPtp=50; Kuka.PointName=P5; Kuka.BlendingEnabled=True; Kuka.FrameData.tq_state=False; Kuka.FrameData.base_no=8; Kuka.FrameData.tool_no=5; Kuka.FrameData.ipo_frame=#BASE; Kuka.MovementDataPdat.apo_mode=#CPTP; Kuka.MovementDataPdat.apo_dist=100; Kuka.MovementData.acc=100; Kuka.MovementData.gear_jerk=50; ArcTech.WdatVarName=WDAT5; Kuka.MoveDataName=CPDAT4; Kuka.VelocityPath=2; Kuka.MovementData.apo_fac=50; Kuka.MovementData.apo_dist=100; Kuka.MovementData.axis_acc=100; Kuka.MovementData.axis_vel=100; Kuka.MovementData.circ_typ=#BASE; Kuka.MovementData.exax_ign=0; Kuka.MovementData.jerk_fac=50; Kuka.MovementData.ori_typ=#CONSTANT; Kuka.FrameData.point2=
+;ENDFOLD Moduleparameters
+;FOLD INI;%{PE}
+ ;FOLD BASISTECH INI
+GLOBAL INTERRUPT DECL 3 WHEN $STOPMESS==TRUE DO IR_STOPM ( )
+INTERRUPT ON 3
+BAS (#INITMOV,0 )
+ ;ENDFOLD (BASISTECH INI)
+ ;FOLD USER INI
+  ;Make your modifications here
+
+ ;ENDFOLD (USER INI)
+
+
+;ENDFOLD (INI)
+
+$BWDSTART=FALSE
+PDAT_ACT=PDEFAULT
+FDAT_ACT=FHOME
+BAS(#PTP_PARAMS,10)
+$H_POS=XHOME
+PTP XHOME
+
+$BWDSTART=FALSE
+PDAT_ACT=PDEFAULT
+FDAT_ACT=FHOME
+BAS(#PTP_PARAMS,10)
+$H_POS=XHOME
+PTP XHOME
+END
+
